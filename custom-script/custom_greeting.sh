@@ -66,7 +66,7 @@ if echo \$SERIAL | grep -E "^R" >/dev/null 2>&1; then
         P_DATE=\$(echo \$P_YEAR \$P_WEEK \$F_MONDAY | awk '{print strftime("%B %Y", mktime(\$1" 01 "\$2" 00 00 00")+(\$3*7*24*60*60*10))}')
     fi
 else
-    P_DATE="UNKNOWN"
+    P_DATE=\$(date -f /mnt/reserve/p_date +"%B %Y" 2>&-) || P_DATE="UNKNOWN"
 fi
 
 echo
@@ -96,5 +96,12 @@ echo "======================================================"
 echo
 EOF
         chmod +x "${IMG_DIR}/etc/profile.d/greeting.sh"
+
+        if [ -r "${FILES_PATH}/p_date.sh" ]; then
+          echo "+Installing production date file creator"
+          install -D -m 0755  "${FILES_PATH}/p_date.sh" "${IMG_DIR}/usr/local/bin/p_date"
+        else
+          echo "-- ${FILES_PATH}/p_date.sh not found/readable"
+        fi
     fi
 }
