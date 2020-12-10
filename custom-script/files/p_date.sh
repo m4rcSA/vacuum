@@ -24,17 +24,23 @@ PARAM="$1"
 
 case ${PARAM} in
   *-help|-h)
+  print_usage
   print_help
-  echo "$USES"
   ;;
   *)
-  date -d "${PARAM}" > /dev/null  2>&1
-  if [ $? != 0 ]; then
-    echo "date ${PARAM} is NOT a valid date"
+  if [ -z "${PARAM}" ]; then
+    echo "date is empty and required"
     print_usage
     exit 1
   else
-    echo "${PARAM}" > /mnt/reserve/p_date
+    date -d "${PARAM}" > /dev/null  2>&1
+    if [ $? != 0 ]; then
+      echo "date ${PARAM} is NOT a valid date"
+      print_usage
+      exit 1
+    else
+      echo "${PARAM}" > /mnt/reserve/p_date
+    fi
   fi
   ;;
 esac
